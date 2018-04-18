@@ -145,6 +145,8 @@ class SharCreator:
 
         self.files[name] = content
 
+        return self
+
     def add_dir(self, src, dest, follow_symlinks=False):
         with _os.scandir(src) as it:
             for entry in it:
@@ -155,11 +157,15 @@ class SharCreator:
                 elif entry.is_dir(follow_symlinks=follow_symlinks):
                     self.add_dir(src_name, dest_name)
 
+        return self
+
     def add_pre(self, chunk):
         self.pre_chunks.append(chunk)
+        return self
 
     def add_post(self, chunk):
         self.post_chunks.append(chunk)
+        return self
 
     def render(
         self,
