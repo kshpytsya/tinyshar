@@ -2,3 +2,5 @@
 
 # tinyshar
 simple Python library and utility for creation of shell archives
+
+Documentation is available [here](https://tinyshar-docs.surge.sh).
