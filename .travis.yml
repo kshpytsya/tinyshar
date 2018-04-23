@@ -27,6 +27,7 @@ deploy:
   #     tags: true
   #     python: 3.6
   - provider: surge
+    skip_cleanup: true
     project: docs/build
     domain: tinyshar-docs.surge.sh
     on:
