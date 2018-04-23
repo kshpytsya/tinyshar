@@ -26,17 +26,17 @@ deploy:
   #     repo: kshpytsya/tinyshar
   #     tags: true
   #     python: 3.6
-  - provider: pypi
-    user: kshpytsya
-    password:
-      secure: "X5IHFPSH9ZhyUCZTdBZwpGxy8zkyjvK21Cmv6jeQ2+X3IvIk/FT4EfvOOa4mAW8Ui23+xofVAUjAoug7EO+7ObvFmolNqANtVv0u28yk7uRSarV0lLwneyQdkaUL/YiV123yFkAE2D5Frcv+MXTZuqogC7NhgZorVzozKp592i4qTp+CcL2peAj9I8wd3+Rruj4Din9rDJH1hvNIwy62CX2hKRoGXQ52wCw4e2pL6LHElBlU0P7di+JYcpcOohyJGI53CuWvulHdeIHvps8IdGS5Ry2nz53vQg+Raca5POSDEAJDrgkas898gYp3YWrGFkiyuiHSJvcmD6Su4v2GHQmml3j30wM/wox0KLxsLDqGKvxYyFumwdYJkJkwa7cALKNqg5hzmlvtLxSpl2LFXRuqnqN5HdNtQPu3Sjqgg6OvJykcqYnPZaEAQZg3nK0a1xeewGCURkX9ejaQJABgqafaAZqxAgbUXI9EQN7+I9R4W5LjdRvLjTtN48R5KT4R1Bb8Wnu9BcRwuEmo1uzZm3ix+rU3RwSGgp8THmarLhhkh1TSlE1/gcDBmEtGQET//zg2gqhwFeUufKI2gBrWpSymYjQoUdqjhzRilOv3BuXqNMgnKvzEzCPRJ6++56tSRL3XLF5ukzYAN1kX4hNeUJ005/gAh/3xn0mX4PwvUC8="
+  - provider: surge
+    project: docs/build
+    domain: tinyshar-docs.surge.sh
     on:
       repo: kshpytsya/tinyshar
       tags: true
       python: 3.6
-  - provider: surge
-    project: docs/build
-    domain: tinyshar-docs.surge.sh
+  - provider: pypi
+    user: kshpytsya
+    password:
+      secure: "obBOBVT52T9OVSIe63GQENWIb/bB7SjA8aVK9ZDKoPT4lHE+c6kc/ZlE44AfYmyBZnlwSCCMzrN+LbidY3YvUuPFQdasQVTmW5jHX1ePTpRmiqMQ06Js6AbeDYkW9Yi78/WNNp+1mtbkgfQotiaaUH1XKgnr2Gu5QF2dxBFfeui0BuGLfkuSm3TzTQTmnCTiR0dWWe9vGkfAiSo4I4OJBMqEsQYQfKLP63WR/mIVyNbupidAg7tfWA9IMWUEoz3XoCr5XMnP9CMaLmoNPSPfBfFJLp+miXlzTkIMNK72ZBOYLZ6xrNqO9rmbQXXhJRNtvB64uc17F1zqT9uFypFNeNJFe2yVq8w5FTpxE1zft4PXsW+U6NrzELM26dtvibbbuwL009y+o29J4R4qwVe8txvyYQH99BwwzyY+LICI+c//5GchS01fYu6WwmI2g7j+neBnZyo/+ddl9/JrGgathN7i4KhYDxYkA1JVmZy1316DGwCHqjgDnKq7OawsfBeNRI8JIvnAHMo1hpBCZLNghwh5k1iYlOTyTQTAqksWNQmaA/H5oQAmMXz0BR8ef9aPVx+zovothcU/9uacqen1B1fYd17iaOApIIQ3L+36nGeH7/f++Fzo2BZh85D3U/fyuO2fgpSmZEuEyJid6YPAqxA6X5cRKErRE7CoQ/hc5ck="
     on:
       repo: kshpytsya/tinyshar
       tags: true
