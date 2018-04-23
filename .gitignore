@@ -62,7 +62,8 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+docs/build/
+docs/source/api/
 
 # PyBuilder
 target/
@@ -83,7 +84,7 @@ celerybeat-schedule
 .env
 
 # virtualenv
-.venv
+.venv*
 venv/
 ENV/
 
@@ -99,3 +100,5 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+reports/
