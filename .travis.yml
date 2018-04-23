@@ -1,7 +1,8 @@
 group: travis_latest
-sudo: false
+sudo: true
 language: python
 install:
+  - sudo update-alternatives --install /bin/sh sh /bin/bash 100
   - pip install --upgrade setuptools pip
   - pip install -r requirements-dev.txt
   - pip install tox-travis
@@ -13,6 +14,7 @@ python:
 script:
   - bash --version
   - /bin/sh --version
+  - shellcheck --version
   - inv check docs test
 deploy:
   # - provider: releases
