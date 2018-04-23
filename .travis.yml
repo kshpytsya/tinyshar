@@ -1,4 +1,4 @@
-dist: xenial
+dist: trusty
 sudo: false
 language: python
 install:
@@ -12,6 +12,7 @@ python:
   - "3.5"
   - "3.6"
 script:
+  - bash --version
   - inv check docs test
 deploy:
   # - provider: releases
