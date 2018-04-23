@@ -5,7 +5,7 @@ jobs:
             xcode: "9.0"
         steps:
             - checkout
-            - run: brew install python3
+            - run: brew upgrade python
             - run: brew install shellcheck
             - run: python3 -V
             - run: pip3 install --upgrade setuptools pip
