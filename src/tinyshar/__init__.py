@@ -254,14 +254,14 @@ class SharCreator:
                 b'#!/bin/sh\n'
                 b'set -e\n'
                 b'set -o pipefail\n'
-                b'DIR=$(mktemp -d'
+                b'DIR=$('
             )
 
             if _test_tmp_dir is not None:
-                put(b" --tmpdir=" + _to_bytes(_shlex.quote(_test_tmp_dir)))
+                put(b"TMPDIR=%s " % _to_bytes(_shlex.quote(_test_tmp_dir)))
 
             put(
-                b')\n'
+                b'mktemp -d)\n'
                 b'cd "$DIR"\n'
             )
 
