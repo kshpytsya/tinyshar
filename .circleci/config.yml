@@ -14,4 +14,4 @@ jobs:
             - run: pip3 list --format columns
             - run: /bin/sh --version
             - run: shellcheck --version
-            - run: inv check docs test
+            - run: PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH" inv check docs test
