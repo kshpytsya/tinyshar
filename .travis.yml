@@ -34,3 +34,10 @@ deploy:
       repo: kshpytsya/tinyshar
       tags: true
       python: 3.6
+  - provider: surge
+    project: docs/build
+    domain: tinyshar-docs.surge.sh
+    on:
+      repo: kshpytsya/tinyshar
+      tags: true
+      python: 3.6
