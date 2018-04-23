@@ -14,7 +14,7 @@ setup(
     package_dir={"": "src"},
     entry_points={"console_scripts": ["tinyshar = tinyshar.cli:main"]},
     classifiers=[
-        "Development Status :: 3 - Beta",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Intended Audience :: Information Technology",
         "License :: OSI Approved :: MIT License",
