@@ -69,8 +69,11 @@ def _make_reader(what):
 class Base64Encoder:
     _MAXBINSIZE = 57
 
+    def init(self, writer):
+        writer(b'if [ "$UNAME" = "FreeBSD" ]; then BASE64_FLAG="-D"; else BASE64_FLAG="-d"; fi\n')
+
     def encode(self, reader, writer):
-        writer(b"base64 -d << _END_\n")
+        writer(b'base64 "$BASE64_FLAG" << _END_\n')
 
         while True:
             chunk = reader(self._MAXBINSIZE)
@@ -268,6 +271,11 @@ class SharCreator:
             if tee_to_file:
                 putl(b'{')
 
+            put(
+                b'# shellcheck disable=SC2034\n'
+                b'UNAME=$(uname)\n'
+            )
+
             if self.pre_chunks:
                 put_annotation(b'PRE:')
                 for i in self.pre_chunks:
@@ -275,6 +283,9 @@ class SharCreator:
 
             files_map = []
             for i, (name, content) in enumerate(sorted(self.files.items())):
+                if i == 0:
+                    encoder.init(put)
+
                 tmp_name = b'%06d' % i
                 files_map.append((tmp_name, name))
 
