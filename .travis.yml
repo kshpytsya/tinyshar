@@ -1,4 +1,4 @@
-dist: trusty
+group: travis_latest
 sudo: false
 language: python
 install:
@@ -13,6 +13,7 @@ python:
   - "3.6"
 script:
   - bash --version
+  - /bin/sh --version
   - inv check docs test
 deploy:
   # - provider: releases
