@@ -249,3 +249,13 @@ def test_dirs2(shar, run, somefiles):
 def test_dirs3(shar, run, somefiles):
     shar.add_pre("false")
     run(expect_returncode=[1], cb_params=dict(expect_files=False))
+
+
+def test_tags(shar):
+    shar.add_file("one", "", tags=[])
+    shar.add_file("two", "", tags=["x"])
+    shar.add_file("\"three\"", "", tags=["x"])
+    shar.add_file("four", "", tags=["y"])
+    assert shar.files_by_tag_as_shell_str("z") == ""
+    assert shar.files_by_tag_as_shell_str("x") == "'\"three\"' two"
+    assert shar.files_by_tag_as_shell_str("y") == "four"

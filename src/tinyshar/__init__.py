@@ -1,4 +1,5 @@
 import binascii as _binascii
+import collections as _collections
 import contextlib as _contextlib
 import hashlib as _hashlib
 import io as _io
@@ -133,8 +134,15 @@ class SharCreator:
         self.dirs = set()
         self.pre_chunks = []
         self.post_chunks = []
+        self._files_by_tag = _collections.defaultdict(lambda: [])
 
-    def add_file(self, name, content):
+    def files_by_tag(self, tag):
+        return sorted(self._files_by_tag[tag])
+
+    def files_by_tag_as_shell_str(self, tag):
+        return ' '.join(_shlex.quote(i) for i in self.files_by_tag(tag))
+
+    def add_file(self, name, content, tags=[]):
         assert isinstance(name, str)
         name = _posixpath.normpath(name)
 
@@ -150,6 +158,10 @@ class SharCreator:
             self.dirs.add(components[:depth])
 
         self.files[name] = content
+
+        for tag in tags:
+            assert isinstance(tag, str)
+            self._files_by_tag[tag].append(name)
 
         return self
 
