@@ -26,3 +26,8 @@ def build(ctx):
 @task
 def test(ctx):
     ctx.run("tox")
+
+
+@task
+def docs(ctx):
+    ctx.run("sphinx-build docs/source docs/build")
