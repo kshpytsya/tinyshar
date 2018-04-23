@@ -6,6 +6,7 @@ def clean(ctx):
     ctx.run("rm -rf dist")
     ctx.run("rm -rf .tox")
     ctx.run("rm -rf reports")
+    ctx.run("rm -rf docs/build")
 
 
 @task
