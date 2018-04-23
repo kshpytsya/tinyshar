@@ -9,7 +9,7 @@ setup(
     url="https://github.com/kshpytsya/tinyshar",
     setup_requires=["setuptools_scm"],
     use_scm_version=True,
-    python_requires=">=3.3, <3.7",
+    python_requires=">=3.4, <3.7",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     entry_points={"console_scripts": ["tinyshar = tinyshar.cli:main"]},
