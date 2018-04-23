@@ -1,0 +1,34 @@
+dist: xenial
+sudo: false
+language: python
+install:
+  - pip install --upgrade setuptools pip
+  - pip install -r requirements-dev.txt
+  - pip install tox-travis
+  - pip list --format columns
+python:
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+script:
+  - inv check docs test
+deploy:
+  # - provider: releases
+  #   api_key:
+  #     secure: 
+  #   file_glob: true
+  #   file: github-release/*
+  #   skip_cleanup: true
+  #   on:
+  #     repo: kshpytsya/tinyshar
+  #     tags: true
+  #     python: 3.6
+  - provider: pypi
+    user: kshpytsya
+    password:
+      secure: "X5IHFPSH9ZhyUCZTdBZwpGxy8zkyjvK21Cmv6jeQ2+X3IvIk/FT4EfvOOa4mAW8Ui23+xofVAUjAoug7EO+7ObvFmolNqANtVv0u28yk7uRSarV0lLwneyQdkaUL/YiV123yFkAE2D5Frcv+MXTZuqogC7NhgZorVzozKp592i4qTp+CcL2peAj9I8wd3+Rruj4Din9rDJH1hvNIwy62CX2hKRoGXQ52wCw4e2pL6LHElBlU0P7di+JYcpcOohyJGI53CuWvulHdeIHvps8IdGS5Ry2nz53vQg+Raca5POSDEAJDrgkas898gYp3YWrGFkiyuiHSJvcmD6Su4v2GHQmml3j30wM/wox0KLxsLDqGKvxYyFumwdYJkJkwa7cALKNqg5hzmlvtLxSpl2LFXRuqnqN5HdNtQPu3Sjqgg6OvJykcqYnPZaEAQZg3nK0a1xeewGCURkX9ejaQJABgqafaAZqxAgbUXI9EQN7+I9R4W5LjdRvLjTtN48R5KT4R1Bb8Wnu9BcRwuEmo1uzZm3ix+rU3RwSGgp8THmarLhhkh1TSlE1/gcDBmEtGQET//zg2gqhwFeUufKI2gBrWpSymYjQoUdqjhzRilOv3BuXqNMgnKvzEzCPRJ6++56tSRL3XLF5ukzYAN1kX4hNeUJ005/gAh/3xn0mX4PwvUC8="
+    on:
+      repo: kshpytsya/tinyshar
+      tags: true
+      python: 3.6
