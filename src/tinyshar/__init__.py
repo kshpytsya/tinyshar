@@ -70,7 +70,7 @@ class Base64Encoder:
     _MAXBINSIZE = 57
 
     def init(self, writer):
-        writer(b'if [ "$UNAME" = "FreeBSD" ]; then BASE64_FLAG="-D"; else BASE64_FLAG="-d"; fi\n')
+        writer(b'if [ "$UNAME" = "Darwin" ]; then BASE64_FLAG="-D"; else BASE64_FLAG="-d"; fi\n')
 
     def encode(self, reader, writer):
         writer(b'base64 "$BASE64_FLAG" << _END_\n')
