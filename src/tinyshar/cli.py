@@ -4,11 +4,16 @@ import sys
 import tinyshar
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(
         description="create a self-extracting shell archive",
     )
 
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="%(prog)s " + tinyshar.__version__
+    )
     parser.add_argument(
         "-o",
         metavar="<file>",
@@ -45,6 +50,7 @@ def main():
     parser.add_argument(
         "-L",
         action='store_true',
+        default=False,
         help="follow directory symlinks"
     )
     parser.add_argument(
@@ -58,7 +64,7 @@ def main():
         help="do tee stdout and stderr of extractor to file"
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(args=argv)
 
     shar = tinyshar.SharCreator()
 
