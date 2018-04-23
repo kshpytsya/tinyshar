@@ -8,9 +8,8 @@ install:
   - pip install tox-travis
   - pip list --format columns
 python:
-  - "3.4"
-  - "3.5"
   - "3.6"
+  - "3.7-dev"
 script:
   - bash --version
   - /bin/sh --version
