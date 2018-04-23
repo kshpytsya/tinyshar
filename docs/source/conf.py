@@ -15,10 +15,15 @@
 import glob
 import os
 import sys
-import sphinx.ext.apidoc
 
 sys.path.insert(0, os.path.abspath('../../src'))
-sphinx.ext.apidoc.main(['--force', '-o', 'api'] + glob.glob(os.path.join(sys.path[0], '*')))
+
+try:
+    from sphinx.ext import apidoc
+except:  # noqa
+    from sphinx import apidoc
+
+apidoc.main(['--force', '-o', 'api'] + glob.glob(os.path.join(sys.path[0], '*')))
 
 
 # -- Project information -----------------------------------------------------
