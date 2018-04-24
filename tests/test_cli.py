@@ -3,6 +3,7 @@ from tinyshar.cli import main
 import subprocess
 import sys
 import os
+from contextlib import contextmanager
 
 
 def test_empty():
@@ -14,14 +15,46 @@ def test_validation_error():
         main(['-p', '"'])
 
 
-@pytest.mark.skipif(sys.platform == 'win32', reason="does not run on windows")
-def test_fail_due_symlink(tmpdir):
+def test_fail_due_symlink(tmpdir, monkeypatch):
     arena_dir = tmpdir / "arena"
     arena_dir.mkdir()
 
-    NAME = "6ac5f8bb-ac10-49af-b866-a1d21b42943c"
+    # note: since there are no proper symlinks on Windows, we just
+    # mock them on all platforms for testing purposes
 
-    (arena_dir / NAME).mksymlinkto(arena_dir)
+    NAME = "6ac5f8bb-ac10-49af-b866-a1d21b42943c"
+    (arena_dir / NAME).write_binary(b"")
+
+    class MockEntry:  # pragma: no coverage
+        def __init__(self, real):
+            self._real = real
+            self.name = real.name
+
+        def is_file(self, follow_symlinks=True):
+            if self.name == NAME:
+                return False
+
+            return self._real.is_file(follow_symlinks)
+
+        def is_dir(self, follow_symlinks=True):
+            if self.name == NAME:
+                return False
+
+            return self._real.is_file(follow_symlinks)
+
+        def __enter__(self):
+            return self._real.__enter__()
+
+        def __leave__(self, *a):
+            return self._real.__leave__(*a)
+
+    real_scandir = os.scandir
+
+    @contextmanager
+    def mock_scandir(path):
+        yield (MockEntry(i) for i in real_scandir(path))  # pragma: no coverage
+
+    monkeypatch.setattr(os, "scandir", mock_scandir)
 
     with pytest.raises(ValueError) as e:
         main(["-r", str(arena_dir)])
