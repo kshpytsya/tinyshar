@@ -2,7 +2,6 @@ import os
 import pytest
 import tinyshar
 import subprocess
-import sys
 import filecmp
 
 
