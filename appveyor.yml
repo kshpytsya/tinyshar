@@ -9,7 +9,7 @@ init:
     - "python --version"
     - "pip --version"
 install:
-    - "pip install --disable-pip-version-check --user --upgrade setuptools pip"
+    # - "pip install --disable-pip-version-check --user --upgrade setuptools pip"
     - "pip install -r requirements-dev.txt"
     - "pip list --format columns"
     - "choco install shellcheck"
