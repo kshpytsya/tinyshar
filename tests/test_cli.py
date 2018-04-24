@@ -63,7 +63,8 @@ def test_fail_due_symlink(tmpdir, monkeypatch):
 
 def test_all(tmpdir, run_wrapper):
     root_dir = tmpdir / "root"
-    root_root_dir = root_dir / tmpdir / "root_out"
+    # note: we assume that tmpdir is on C: drive on Windows
+    root_root_dir = root_dir / os.path.splitdrive(tmpdir)[1] / "root_out"
     arena_dir = tmpdir / "arena"
     (root_root_dir / "file1").write_binary(b"text1", ensure=True)
     (root_root_dir / "dir" / "file1").write_binary(b"text2", ensure=True)
@@ -89,4 +90,4 @@ def test_all(tmpdir, run_wrapper):
 
     env = dict(os.environ)
     env["TMPDIR"] = str(tmp_dir)
-    subprocess.check_call(run_wrapper + [script_path], env=env)
+    subprocess.check_call(run_wrapper + [str(script_path)], env=env)
