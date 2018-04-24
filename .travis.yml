@@ -14,7 +14,9 @@ script:
   - bash --version
   - /bin/sh --version
   - shellcheck --version
+  - busybox
   - inv check docs test
+  - TINYSHAR_TEST_RUN_WRAPPERX="/bin/busybox sh" inv test
 deploy:
   # - provider: releases
   #   api_key:
