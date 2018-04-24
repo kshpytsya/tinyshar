@@ -2,6 +2,7 @@ import pytest
 from tinyshar.cli import main
 import subprocess
 import sys
+import os
 
 
 def test_empty():
@@ -28,7 +29,7 @@ def test_fail_due_symlink(tmpdir):
     assert NAME in str(e.value)
 
 
-def test_all(tmpdir):
+def test_all(tmpdir, run_wrapper):
     root_dir = tmpdir / "root"
     root_root_dir = root_dir / tmpdir / "root_out"
     arena_dir = tmpdir / "arena"
@@ -36,6 +37,9 @@ def test_all(tmpdir):
     (root_root_dir / "dir" / "file1").write_binary(b"text2", ensure=True)
     (arena_dir / "file1").write_binary(b"text3", ensure=True)
     (arena_dir / "dir" / "file1").write_binary(b"text4", ensure=True)
+
+    tmp_dir = tmpdir / "tmp"
+    tmp_dir.mkdir()
 
     script_path = tmpdir / "script.sh"
 
@@ -51,4 +55,6 @@ def test_all(tmpdir):
 
     script_path.chmod(0o500)
 
-    subprocess.check_call(str(script_path))
+    env = dict(os.environ)
+    env["TMPDIR"] = str(tmp_dir)
+    subprocess.check_call(run_wrapper + [script_path], env=env)

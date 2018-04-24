@@ -22,8 +22,7 @@ def empty_path(tmpdir):
 
 
 @pytest.fixture
-@pytest.mark.skipif(sys.platform == 'win32', reason="does not run on windows")
-def run(tmpdir, shar):
+def run(tmpdir, shar, run_wrapper):
     class Run:
         def __init__(self):
             self.run_count = 0
@@ -74,7 +73,7 @@ def run(tmpdir, shar):
             os.chmod(script_fname, 0o500)
 
             cp = subprocess.run(
-                script_fname,
+                run_wrapper + [script_fname],
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -277,3 +276,10 @@ def test_chunk_order(shar):
 def test_chunk_order_assert(shar):
     with pytest.raises(AssertionError):
         shar.add_pre("f", order="x")
+
+
+def test_target_is_a_dir(tmpdir, shar, run):
+    d = tmpdir / "target"
+    d.mkdir()
+    shar.add_file(str(d), "")
+    run(expect_returncode=[1])

@@ -122,9 +122,9 @@ class Md5Validator:
         return reader_wrapper
 
     def render(self, writer):
-        writer(b"md5sum --quiet --strict --check << _END_\n")
+        writer(b"md5sum -c << _END_\n")
         for fname, md5 in self.hashes:
-            writer(b"%s %s\n" % (md5, fname))
+            writer(b"%s  %s\n" % (md5, fname))
         writer(b"_END_\n")
 
 
@@ -193,6 +193,7 @@ class SharCreator:
     def render(
         self,
         *,
+        shebang=b'/bin/sh',
         out_stm=None,
         encoder=None,
         build_validators=None,
@@ -262,8 +263,8 @@ class SharCreator:
                     for _, i in sorted(chunks, key=lambda i: i[0]):
                         putl(_to_bytes(i))
 
+            put(b'#!%s\n' % _to_bytes(shebang))
             put(
-                b'#!/bin/sh\n'
                 b'set -e\n'
                 b'set -o pipefail\n'
                 b'DIR=$('
@@ -313,7 +314,9 @@ class SharCreator:
                 put(b'mkdir -p %s\n' % _shlex.quote('/'.join(i)).encode())
 
             for tmp_name, name in files_map:
-                put(b'mv --no-target-directory ../%s %s\n' % (tmp_name, _shlex.quote(name).encode()))
+                target = _shlex.quote(name).encode()
+                put(b"test '!' -d %s\n" % target)
+                put(b"mv -f ../%s %s\n" % (tmp_name, target))
 
             put_chunks(b'POST:', self._post_chunks)
 
