@@ -130,10 +130,10 @@ class Md5Validator:
 
 class SharCreator:
     def __init__(self):
-        self.files = {}
-        self.dirs = set()
-        self.pre_chunks = []
-        self.post_chunks = []
+        self._files = {}
+        self._dirs = set()
+        self._pre_chunks = []
+        self._post_chunks = []
         self._files_by_tag = _collections.defaultdict(lambda: [])
 
     def files_by_tag(self, tag):
@@ -149,15 +149,15 @@ class SharCreator:
         if name in ['.', '/']:
             raise IsADirectoryError(name)
 
-        if name in self.files:
+        if name in self._files:
             raise FileExistsError(name)
 
         components = tuple(name.split('/'))
         is_abs = components[0] == ''
         for depth in range(1 + int(is_abs), len(components)):
-            self.dirs.add(components[:depth])
+            self._dirs.add(components[:depth])
 
-        self.files[name] = content
+        self._files[name] = content
 
         for tag in tags:
             assert isinstance(tag, str)
@@ -180,11 +180,11 @@ class SharCreator:
         return self
 
     def add_pre(self, chunk):
-        self.pre_chunks.append(chunk)
+        self._pre_chunks.append(chunk)
         return self
 
     def add_post(self, chunk):
-        self.post_chunks.append(chunk)
+        self._post_chunks.append(chunk)
         return self
 
     def render(
@@ -268,13 +268,13 @@ class SharCreator:
             if tee_to_file:
                 putl(b'{')
 
-            if self.pre_chunks:
+            if self._pre_chunks:
                 put_annotation(b'PRE:')
-                for i in self.pre_chunks:
+                for i in self._pre_chunks:
                     putl(_to_bytes(i))
 
             files_map = []
-            for i, (name, content) in enumerate(sorted(self.files.items())):
+            for i, (name, content) in enumerate(sorted(self._files.items())):
                 tmp_name = b'%06d' % i
                 files_map.append((tmp_name, name))
 
@@ -300,15 +300,15 @@ class SharCreator:
                 b'cd arena\n'
             )
 
-            for i in sorted(self.dirs):
+            for i in sorted(self._dirs):
                 put(b'mkdir -p %s\n' % _shlex.quote('/'.join(i)).encode())
 
             for tmp_name, name in files_map:
                 put(b'mv --no-target-directory ../%s %s\n' % (tmp_name, _shlex.quote(name).encode()))
 
-            if self.post_chunks:
+            if self._post_chunks:
                 put_annotation(b'POST:')
-                for i in self.post_chunks:
+                for i in self._post_chunks:
                     putl(_to_bytes(i))
 
             if tee_to_file:
