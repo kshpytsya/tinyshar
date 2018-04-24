@@ -10,4 +10,4 @@ def run_wrapper():  # pragma: no cover
     if v is None:
         return []
     else:
-        return shlex.split(v)
+        return shlex.split(v, posix=False)
