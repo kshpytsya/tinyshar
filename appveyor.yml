@@ -8,7 +8,7 @@ init:
     - "set PATH=%PYTHON%/scripts;%PYTHON%;%PATH%"
     - "python --version"
     - "pip --version"
-    - "set TINYSHAR_TEST_RUN_WRAPPER=%APPVEYOR_BUILD_FOLDER%/bin/busybox.exe sh"
+    - "set TINYSHAR_TEST_RUN_WRAPPER=%APPVEYOR_BUILD_FOLDER%/busybox.exe sh"
 install:
     # - "pip install --disable-pip-version-check --user --upgrade setuptools pip"
     - "pip install -r requirements-dev.txt"
@@ -16,7 +16,7 @@ install:
     - "choco install shellcheck"
     - "shellcheck --version"
     - "mkdir bin"
-    - "curl -fsSL -o bin/busybox.exe https://frippery.org/files/busybox/busybox.exe"
+    - "curl -fsSL -o busybox.exe https://frippery.org/files/busybox/busybox.exe"
     - "busybox"
 build_script:
     - "inv check"
