@@ -179,13 +179,16 @@ class SharCreator:
 
         return self
 
-    def add_pre(self, chunk):
-        self._pre_chunks.append(chunk)
+    def _add_chunk(self, dest, chunk, order):
+        assert isinstance(order, int)
+        dest.append((order, chunk))
         return self
 
-    def add_post(self, chunk):
-        self._post_chunks.append(chunk)
-        return self
+    def add_pre(self, chunk, *, order=0):
+        return self._add_chunk(self._pre_chunks, chunk, order)
+
+    def add_post(self, chunk, *, order=0):
+        return self._add_chunk(self._post_chunks, chunk, order)
 
     def render(
         self,
@@ -250,6 +253,15 @@ class SharCreator:
                 put_break()
                 put(b"# %s\n" % s)
 
+            def put_chunks(annotation, chunks):
+                if chunks:
+                    put_annotation(annotation)
+
+                    # according to https://wiki.python.org/moin/HowTo/Sorting/#Sort_Stability_and_Complex_Sorts
+                    # sorts are guaranteed to stable.
+                    for _, i in sorted(chunks, key=lambda i: i[0]):
+                        putl(_to_bytes(i))
+
             put(
                 b'#!/bin/sh\n'
                 b'set -e\n'
@@ -268,10 +280,7 @@ class SharCreator:
             if tee_to_file:
                 putl(b'{')
 
-            if self._pre_chunks:
-                put_annotation(b'PRE:')
-                for i in self._pre_chunks:
-                    putl(_to_bytes(i))
+            put_chunks(b'PRE:', self._pre_chunks)
 
             files_map = []
             for i, (name, content) in enumerate(sorted(self._files.items())):
@@ -306,10 +315,7 @@ class SharCreator:
             for tmp_name, name in files_map:
                 put(b'mv --no-target-directory ../%s %s\n' % (tmp_name, _shlex.quote(name).encode()))
 
-            if self._post_chunks:
-                put_annotation(b'POST:')
-                for i in self._post_chunks:
-                    putl(_to_bytes(i))
+            put_chunks(b'POST:', self._post_chunks)
 
             if tee_to_file:
                 putl(b'} 2>&1 | tee log')

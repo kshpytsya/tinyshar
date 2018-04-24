@@ -259,3 +259,21 @@ def test_tags(shar):
     assert shar.files_by_tag_as_shell_str("z") == ""
     assert shar.files_by_tag_as_shell_str("x") == "'\"three\"' two"
     assert shar.files_by_tag_as_shell_str("y") == "four"
+
+
+def test_chunk_order(shar):
+    shar.add_pre("f", order=3)
+    shar.add_pre("e", order=3)
+    shar.add_pre(b"d")
+    shar.add_pre("c")
+    shar.add_pre("b", order=-1)
+    shar.add_pre(b"a", order=-1)
+    shar.add_post("xxx")
+
+    s = b''.join(shar.render())
+    assert b'\nb\na\nd\nc\nf\ne\n' in s
+
+
+def test_chunk_order_assert(shar):
+    with pytest.raises(AssertionError):
+        shar.add_pre("f", order="x")
