@@ -105,8 +105,8 @@ def cmpdirs(tmpdir, shar, run):
         d.mkdir()
         dir_n += 1
 
-        def pre_run_cb(**kw):
-            shar.add_dir(str(d), dest)
+        def pre_run_cb(tags_cb=None, **kw):
+            shar.add_dir(str(d), dest, tags_cb=tags_cb)
 
         def post_run_cb(expect_files=True, **kw):
             if os.path.isabs(dest):
@@ -257,6 +257,14 @@ def test_tags(shar):
     assert shar.files_by_tag_as_shell_str("z") == ""
     assert shar.files_by_tag_as_shell_str("x") == "'\"three\"' two"
     assert shar.files_by_tag_as_shell_str("y") == "four"
+
+
+def test_dirs_tags_cb(shar, run, somefiles):
+    def tags_cb(entry):
+        return ['tag1'] if entry.name == '12' else []
+
+    run(cb_params=dict(tags_cb=tags_cb))
+    assert len(shar.files_by_tag("tag1")) == 1
 
 
 def test_chunk_order(shar):

@@ -142,7 +142,7 @@ class SharCreator:
     def files_by_tag_as_shell_str(self, tag):
         return ' '.join(_shlex.quote(i) for i in self.files_by_tag(tag))
 
-    def add_file(self, name, content, tags=[]):
+    def add_file(self, name, content, *, tags=[]):
         assert isinstance(name, str)
         name = _posixpath.normpath(name)
 
@@ -165,17 +165,34 @@ class SharCreator:
 
         return self
 
-    def add_dir(self, src, dest, follow_symlinks=False):
-        with _os.scandir(src) as it:
-            for entry in it:
-                src_name = _os.path.join(src, entry.name)
-                dest_name = _posixpath.join(dest, entry.name)
-                if entry.is_file():
-                    self.add_file(dest_name, lambda fname=src_name: open(fname, 'rb'))
-                elif entry.is_dir(follow_symlinks=follow_symlinks):
-                    self.add_dir(src_name, dest_name)
-                else:
-                    raise ValueError("do not know how to deal with " + src_name)
+    def add_dir(
+        self,
+        src,
+        dest,
+        *,
+        follow_symlinks=False,
+        tags_cb=None
+    ):
+        if tags_cb is None:
+            tags_cb = lambda e: []  # noqa: E731
+
+        def recurse(src, dest):
+            with _os.scandir(src) as it:
+                for entry in it:
+                    src_name = _os.path.join(src, entry.name)
+                    dest_name = _posixpath.join(dest, entry.name)
+                    if entry.is_file():
+                        self.add_file(
+                            dest_name,
+                            lambda fname=src_name: open(fname, 'rb'),
+                            tags=tags_cb(entry)
+                        )
+                    elif entry.is_dir(follow_symlinks=follow_symlinks):
+                        recurse(src_name, dest_name)
+                    else:
+                        raise ValueError("do not know how to deal with " + src_name)
+
+        recurse(src, dest)
 
         return self
 
