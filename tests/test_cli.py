@@ -61,7 +61,7 @@ def test_fail_due_symlink(tmpdir, monkeypatch):
     assert NAME in str(e.value)
 
 
-def test_all(tmpdir, run_wrapper):
+def test_all(tmpdir, run_wrapper, capfd):
     root_dir = tmpdir / "root"
     # note: we assume that tmpdir is on C: drive on Windows
     root_root_dir = root_dir / os.path.splitdrive(tmpdir)[1] / "root_out"
@@ -95,8 +95,13 @@ def test_all(tmpdir, run_wrapper):
         "-f", ";%s;./" % file4_path,
     ])
 
+    captured = capfd.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
     script_path.chmod(0o500)
 
     env = dict(os.environ)
     env["TMPDIR"] = str(tmp_dir)
+
     subprocess.check_call(run_wrapper + [str(script_path)], env=env)

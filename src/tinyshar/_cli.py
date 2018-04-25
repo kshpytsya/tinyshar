@@ -104,7 +104,6 @@ def main(argv=None):
             desc = _funny_split(desc)
             src, dest = desc[:2]
             dest_path = _dest_path(src, dest)
-            print(src, dest_path)
             shar.add_file(dest_path, lambda: open(src, 'rb'))
 
             if len(desc) > 2:
