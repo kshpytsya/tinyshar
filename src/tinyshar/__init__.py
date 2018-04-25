@@ -66,7 +66,7 @@ def _make_reader(what):
     raise TypeError(type(what))
 
 
-class Base64Encoder:
+class _Base64Encoder:
     _MAXBINSIZE = 57
 
     def encode(self, reader, writer):
@@ -82,12 +82,15 @@ class Base64Encoder:
         writer(b"_END_\n")
 
 
+Base64Encoder = _Base64Encoder
+
+
 class ValidatorError(RuntimeError):
     pass
 
 
 @_contextlib.contextmanager
-def ShellcheckValidator():
+def _ShellcheckValidator():
     process = _subprocess.Popen(
         [_checked_which('shellcheck'), '-'],
         stdin=_subprocess.PIPE,
@@ -102,7 +105,10 @@ def ShellcheckValidator():
         raise ValidatorError("shellcheck failed")
 
 
-class Md5Validator:
+ShellcheckValidator = _ShellcheckValidator
+
+
+class _Md5Validator:
     def __init__(self):
         self.hashes = []
 
@@ -126,6 +132,9 @@ class Md5Validator:
         for fname, md5 in self.hashes:
             writer(b"%s  %s\n" % (md5, fname))
         writer(b"_END_\n")
+
+
+Md5Validator = _Md5Validator
 
 
 class SharCreator:
