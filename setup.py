@@ -4,7 +4,7 @@ setup(
     name="tinyshar",
     description="simple library and utility for creation of shell archives",
     long_description=open("README.md").read(),  # no "with..." will do for setup.py
-    long_description_content_type='text/markdown',
+    long_description_content_type='text/markdown; charset=UTF-8; variant=GFM',
     license="MIT",
     author="Kyrylo Shpytsya",
     author_email="kshpitsa@gmail.com",
