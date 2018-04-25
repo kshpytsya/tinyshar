@@ -39,7 +39,7 @@ deploy:
       python: 3.6
   - provider: script
     skip_cleanup: true
-    script: twine upload dist/*
+    script: twine upload dist/*.tar.gz && twine upload dist/*.whl
     on:
       repo: kshpytsya/tinyshar
       tags: true
