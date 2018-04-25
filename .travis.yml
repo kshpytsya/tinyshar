@@ -16,7 +16,7 @@ script:
   - shellcheck --version
   - busybox
   - inv check docs test
-  - TINYSHAR_TEST_RUN_WRAPPERX="/bin/busybox sh" inv test
+  - TINYSHAR_TEST_RUN_WRAPPER="/bin/busybox sh" inv test
   - inv build
 deploy:
   # - provider: releases
