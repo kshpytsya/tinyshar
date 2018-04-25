@@ -3,6 +3,8 @@ from setuptools import setup, find_packages
 setup(
     name="tinyshar",
     description="simple library and utility for creation of shell archives",
+    long_description=open("README.md").read(),  # no "with..." will do for setup.py
+    long_description_content_type='text/markdown',
     license="MIT",
     author="Kyrylo Shpytsya",
     author_email="kshpitsa@gmail.com",

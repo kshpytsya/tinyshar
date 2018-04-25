@@ -3,4 +3,6 @@ advbumpversion
 flake8
 tox
 tox-venv
+twine
+wheel
 sphinx ; sys_platform == 'linux'

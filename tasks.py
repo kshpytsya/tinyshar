@@ -21,7 +21,7 @@ def check(ctx):
 
 @task
 def build(ctx):
-    ctx.run("python setup.py sdist")
+    ctx.run("python setup.py sdist bdist_wheel")
 
 
 @task
