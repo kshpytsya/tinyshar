@@ -12,7 +12,7 @@ setup(
     python_requires=">=3.6, <=3.7",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    entry_points={"console_scripts": ["tinyshar = tinyshar.cli:main"]},
+    entry_points={"console_scripts": ["tinyshar = tinyshar._cli:main"]},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",

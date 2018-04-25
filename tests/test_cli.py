@@ -1,5 +1,5 @@
 import pytest
-from tinyshar.cli import main
+from tinyshar._cli import main
 import subprocess
 import os
 from contextlib import contextmanager
