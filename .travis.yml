@@ -37,14 +37,6 @@ deploy:
       repo: kshpytsya/tinyshar
       tags: true
       python: 3.6
-  # - provider: pypi
-  #   user: kshpytsya
-  #   password:
-  #     secure: "cmHDWe1yNW603Pd40DtuD2/t/OADkVT544OsE2neHAD2qfKMIuOYz0YBwdiEGoUTj8qdGzFFrIMKLPy0INJtDAalGPy7cqWwhpX5EVf/Bj/9VBORH42kS4Ns0wqLvmNQtqM0tU/Lag14XoifahDi1bO/N0hsM/Jep/iKdM+8zMvECTUs1CYQ+uvI1Z4D4TaSOFT3FwnD0chFaWbnQCz4ck931vFLRKpUa2RhVkJ3KXjVOXrpKOIqph4IxOwKFTgjRRVZF+k0tfYeYHnMhQf34fIfwcTkCqHFoCx7n9AVATjSVcYRQubNX8fnJsqXLR8LPXMKAtW8ZVxQQahbb5402KDiSAtiaj0uRVbPoJSr6h8p4woBYzJ2s+71/ygGy/gD2//2GVrqnNEFJHRedDkULTE9/dBNmv7B1Oqh8rFUFiO3LVsN28UK90LI50JFKsKgoMvqHRW26D06n+WiHcBwQ4EgPB9VfhDW8IZV0YzrIh42O/BYXHPwCqV9JJqysjiaN0dmklNM8K7doOZXCPUmbwEFQGCGEdkcuReJg+IbYyzT6tX0DVZoazeeccVfQ4wEBX1b/AI+94J6AX5S6QJfgI7wZJE3rMwzbhcCFOaqOjVueqT6dLIrA64OyvOTD4uRtQc+jiEdNTgu9KEEebsfdj2P/3hLfmhVDv290r0ptkI="
-  #   on:
-  #     repo: kshpytsya/tinyshar
-  #     tags: true
-  #     python: 3.6
   - provider: script
     skip_cleanup: true
     script: twine upload dist/*
