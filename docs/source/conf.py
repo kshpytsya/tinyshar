@@ -33,9 +33,9 @@ copyright = '2018, Kyrylo Shpytsya'
 author = 'Kyrylo Shpytsya'
 
 # The short X.Y version
-version = ''
+version = '0.4.2'
 # The full version, including alpha/beta/rc tags
-release = ''
+release = version
 
 
 # -- General configuration ---------------------------------------------------
