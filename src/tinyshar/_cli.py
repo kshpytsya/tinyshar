@@ -13,6 +13,10 @@ def _dest_path(src, dest):
     return dest
 
 
+def _funny_split(s):
+    return s[1:].split(s[0]) if s else []
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         description="create a self-extracting shell archive",
@@ -37,11 +41,12 @@ def main(argv=None):
     )
     parser.add_argument(
         "-f",
-        metavar="<src:dest[:mode]>",
+        metavar="<:src:dest[:mode]>",
         action='append',
         default=[],
         help='add a single file "src" to be extracted to "dest". '
-             'If "dest" ends with "/" it is treated as a directory name. Can be specified multiple times'
+             'If "dest" ends with "/" it is treated as a directory name. '
+             'Note that ":" can be replaced by any character. Can be specified multiple times'
     )
     parser.add_argument(
         "-r",
@@ -96,7 +101,7 @@ def main(argv=None):
 
     for i in args.f:
         def add_file(desc):
-            desc = desc.split(':', 2)
+            desc = _funny_split(desc)
             src, dest = desc[:2]
             dest_path = _dest_path(src, dest)
             print(src, dest_path)

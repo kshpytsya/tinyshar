@@ -89,10 +89,10 @@ def test_all(tmpdir, run_wrapper):
         "-c", "true",
         "-a", str(root_dir),
         "-r", str(arena_dir),
-        "-f", os.path.devnull + ":empty",
-        "-f", os.path.devnull + ":empty file:600",
-        "-f", str(file3_path) + ":",
-        "-f", str(file4_path) + ":./",
+        "-f", ";%s;empty" % os.path.devnull,
+        "-f", ";%s;empty file;600" % os.path.devnull,
+        "-f", ";%s;" % file3_path,
+        "-f", ";%s;./" % file4_path,
     ])
 
     script_path.chmod(0o500)
