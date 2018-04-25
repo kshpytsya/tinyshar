@@ -61,6 +61,8 @@ def run(tmpdir, shar, run_wrapper):
                 )
                 if patch_cb:
                     rendered = b''.join(shar.render(**render_opts))
+                    rendered2 = b''.join(shar.render(**render_opts))
+                    assert rendered == rendered2
                     rendered = patch_cb(rendered)
                     out_stm.write(rendered)
                 else:
