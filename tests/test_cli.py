@@ -71,6 +71,11 @@ def test_all(tmpdir, run_wrapper):
     (arena_dir / "file1").write_binary(b"text3", ensure=True)
     (arena_dir / "dir" / "file1").write_binary(b"text4", ensure=True)
 
+    file3_path = tmpdir / "file3"
+    file4_path = tmpdir / "file4"
+    file3_path.write_binary(b"text5")
+    file4_path.write_binary(b"text6")
+
     tmp_dir = tmpdir / "tmp"
     tmp_dir.mkdir()
 
@@ -83,7 +88,11 @@ def test_all(tmpdir, run_wrapper):
         "-c", "true",
         "-c", "true",
         "-a", str(root_dir),
-        "-r", str(arena_dir)
+        "-r", str(arena_dir),
+        "-f", os.path.devnull + ":empty",
+        "-f", os.path.devnull + ":empty file:600",
+        "-f", str(file3_path) + ":",
+        "-f", str(file4_path) + ":./",
     ])
 
     script_path.chmod(0o500)

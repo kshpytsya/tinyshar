@@ -1,7 +1,16 @@
 import argparse
 import contextlib
+import os
+import shlex
 import sys
 import tinyshar
+
+
+def _dest_path(src, dest):
+    if dest == '' or dest.endswith('/'):
+        return dest + os.path.basename(src)
+
+    return dest
 
 
 def main(argv=None):
@@ -25,6 +34,14 @@ def main(argv=None):
         action='append',
         default=[],
         help="directory containing files to be extracted to root. Can be specified multiple times"
+    )
+    parser.add_argument(
+        "-f",
+        metavar="<src:dest[:mode]>",
+        action='append',
+        default=[],
+        help='add a single file "src" to be extracted to "dest". '
+             'If "dest" ends with "/" it is treated as a directory name. Can be specified multiple times'
     )
     parser.add_argument(
         "-r",
@@ -76,6 +93,20 @@ def main(argv=None):
 
     for i in args.p:
         shar.add_pre(i)
+
+    for i in args.f:
+        def add_file(desc):
+            desc = desc.split(':', 2)
+            src, dest = desc[:2]
+            dest_path = _dest_path(src, dest)
+            print(src, dest_path)
+            shar.add_file(dest_path, lambda: open(src, 'rb'))
+
+            if len(desc) > 2:
+                mode = desc[2]
+                shar.add_post("chmod %s %s" % (mode, shlex.quote(dest_path)))
+
+        add_file(i)
 
     for i in args.c:
         shar.add_post(i)
