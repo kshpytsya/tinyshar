@@ -265,8 +265,7 @@ class SharCreator:
 
             put(b'#!%s\n' % _to_bytes(shebang))
             put(
-                b'set -e\n'
-                b'set -o pipefail\n'
+                b'set -euxo pipefail\n'
                 b'DIR=$('
             )
 
