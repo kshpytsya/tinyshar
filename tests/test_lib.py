@@ -52,7 +52,8 @@ def run(tmpdir, shar, run_wrapper):
             tmp_dir = tmpdir / "tmp"
             tmp_dir.mkdir()
 
-            script_fname = str(tmpdir / "script.sh")
+            script = tmpdir / "script.sh"
+            script_fname = str(script)
 
             with open(script_fname, "wb") as out_stm:
                 render_opts = dict(
@@ -70,6 +71,13 @@ def run(tmpdir, shar, run_wrapper):
                         out_stm=out_stm,
                         **render_opts
                     )
+                    rendered = None
+
+            if rendered is None:
+                rendered = script.read_binary()
+
+            assert rendered.startswith(b'#!')
+            assert rendered.endswith(b'#############\n')
 
             os.chmod(script_fname, 0o500)
 
