@@ -33,7 +33,7 @@ def _checked_which(what):
     return result
 
 
-def _make_reader(what):
+def _make_reader_stm(what):
     if callable(what):
         what = what()
 
@@ -41,27 +41,10 @@ def _make_reader(what):
         what = what.encode()
 
     if isinstance(what, bytes):
-        ofs = 0
-
-        def reader(n):
-            nonlocal ofs
-            n = min(n, len(what) - ofs)
-            result = what[ofs: ofs + n]
-            ofs += n
-            return result
-
-        return reader
+        return _io.BytesIO(what)
 
     if isinstance(what, _io.IOBase):
-        def reader(n):
-            result = what.read(n)
-
-            if not result:
-                what.close()
-
-            return result
-
-        return reader
+        return what
 
     raise TypeError(type(what))
 
@@ -69,8 +52,8 @@ def _make_reader(what):
 class _Base64Encoder:
     _MAXBINSIZE = 57
 
-    def encode(self, reader, writer):
-        writer(b"base64 -d << _END_\n")
+    def encode(self, dest, reader, writer):
+        writer(b"base64 -d << '_END_' > '%s'\n" % dest)
 
         while True:
             chunk = reader(self._MAXBINSIZE)
@@ -128,7 +111,7 @@ class _Md5Validator:
         return reader_wrapper
 
     def render(self, writer):
-        writer(b"md5sum -c << _END_\n")
+        writer(b"md5sum -c << '_END_'\n")
         for fname, md5 in self.hashes:
             writer(b"%s  %s\n" % (md5, fname))
         writer(b"_END_\n")
@@ -314,14 +297,14 @@ class SharCreator:
                 files_map.append((tmp_name, name))
 
                 put_annotation(b'file: %s\n' % name.encode())
-                put(b'>"%s" ' % tmp_name)
 
-                reader = _make_reader(content)
+                with _make_reader_stm(content) as reader_stm:
+                    reader = lambda n: reader_stm.read(n)  # noqa: E731
 
-                for validator in extraction_validators:
-                    reader = validator.wrap_reader(reader, tmp_name)
+                    for validator in extraction_validators:
+                        reader = validator.wrap_reader(reader, tmp_name)
 
-                encoder.encode(reader, put)
+                    encoder.encode(tmp_name, reader, put)
 
             if files_map:
                 put_annotation(b"validation:\n")
