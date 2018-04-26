@@ -8,6 +8,7 @@ jobs:
             - run: brew upgrade python
             - run: brew install shellcheck
             - run: brew install coreutils
+            - run: brew install xz
             - run: python3 -V
             - run: pip3 install --upgrade setuptools pip
             - run: pip3 install --user -r requirements-dev.txt

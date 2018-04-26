@@ -40,6 +40,7 @@ def run(tmpdir, shar, run_wrapper):
             expect_returncode=[0],
             cb_params={},
             tee_to_file=True,
+            encoder=None,
             patch_cb=None
         ):
             # __tracebackhide__ = True
@@ -58,6 +59,7 @@ def run(tmpdir, shar, run_wrapper):
             with open(script_fname, "wb") as out_stm:
                 render_opts = dict(
                     tee_to_file=tee_to_file,
+                    encoder=encoder,
                     _test_tmp_dir=str(tmp_dir)
                 )
                 if patch_cb:
@@ -152,6 +154,7 @@ def somefiles(tmpdir, cmpdirs):
     arena_dir = cmpdirs("")
     (arena_dir / "2").write_binary(b"two", ensure=True)
     (arena_dir / "d2" / "2").write_binary(b"two-two", ensure=True)
+    (arena_dir / "d2" / "3").write_binary(b" " * (1024 * 1024), ensure=True)
 
 
 def test_empty(shar):
@@ -250,8 +253,9 @@ def test_dirs1(shar, run, somefiles):
     run(expect_returncode=[1])
 
 
-def test_dirs2(shar, run, somefiles):
-    run()
+@pytest.mark.parametrize('encoder', [None, tinyshar.Base64Encoder()])
+def test_dirs2(shar, run, somefiles, encoder):
+    run(encoder=encoder)
 
 
 def test_dirs3(shar, run, somefiles):

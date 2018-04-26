@@ -3,6 +3,7 @@ import collections as _collections
 import contextlib as _contextlib
 import hashlib as _hashlib
 import io as _io
+import lzma as _lzma
 import os as _os
 import posixpath as _posixpath
 import shlex as _shlex
@@ -49,14 +50,73 @@ def _make_reader_stm(what):
     raise TypeError(type(what))
 
 
+class _NoCompressor:
+    def wrap(self, reader):
+        return b'', reader
+
+
+NoCompressor = _NoCompressor
+
+
+class _XzCompressor:
+    def wrap(self, reader):
+        READ_CHUNK = 1024 * 1024
+        compressor = _lzma.LZMACompressor()
+
+        compressed = []
+        compressed_pos = 0
+        eof = False
+
+        def reader_wrapper(n):
+            nonlocal compressed_pos
+            nonlocal eof
+
+            result = []
+
+            while n:  # pragma: no branch
+                while n and compressed:
+                    avail = min(n, len(compressed[0]) - compressed_pos)
+                    if avail == 0:
+                        compressed.pop(0)
+                        compressed_pos = 0
+                        continue
+
+                    result.append(compressed[0][compressed_pos:compressed_pos + avail])
+                    n -= avail
+                    compressed_pos += avail
+
+                if eof:
+                    break
+
+                if n:  # pragma: no branch
+                    uncompressed = reader(READ_CHUNK)
+                    if uncompressed:
+                        compressed.append(compressor.compress(uncompressed))
+                    else:
+                        eof = True
+                        compressed.append(compressor.flush())
+
+            return b''.join(result)
+
+        return b'| unxz ', reader_wrapper
+
+
+XzCompressor = _XzCompressor
+
+
 class _Base64Encoder:
     _MAXBINSIZE = 57
 
+    def __init__(self, *, compressor=None):
+        self.compressor = compressor or NoCompressor()
+
     def encode(self, dest, reader, writer):
-        writer(b"base64 -d << '_END_' > '%s'\n" % dest)
+        compressor_pipe_str, compressor_reader = self.compressor.wrap(reader)
+
+        writer(b"base64 -d << '_END_' %s> '%s'\n" % (compressor_pipe_str, dest))
 
         while True:
-            chunk = reader(self._MAXBINSIZE)
+            chunk = compressor_reader(self._MAXBINSIZE)
             if not chunk:
                 break
 
@@ -226,7 +286,7 @@ class SharCreator:
             List[bytes]: list of chunks comprising rendered result. Use "b''.join(render_result)" to obtain ``bytes``.
             None: if `out_stm` was supplied
         """
-        encoder = encoder or Base64Encoder()
+        encoder = encoder or Base64Encoder(compressor=XzCompressor())
         if build_validators is None:
             build_validators = [ShellcheckValidator()]
         if extraction_validators is None:

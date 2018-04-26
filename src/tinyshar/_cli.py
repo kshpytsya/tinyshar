@@ -76,6 +76,12 @@ def main(argv=None):
         help="follow directory symlinks"
     )
     parser.add_argument(
+        "-C",
+        action='store_true',
+        default=False,
+        help="enable compression"
+    )
+    parser.add_argument(
         "--no-shellcheck",
         action='store_true',
         help="do not check resulting archive with shellcheck"
@@ -125,6 +131,7 @@ def main(argv=None):
             shar.render(
                 out_stm=out_stm,
                 build_validators=[] if args.no_shellcheck else [tinyshar.ShellcheckValidator()],
+                encoder=tinyshar.Base64Encoder(compressor=tinyshar.XzCompressor() if args.C else None),
                 tee_to_file=not args.no_tee
             )
         except tinyshar.ValidatorError as e:

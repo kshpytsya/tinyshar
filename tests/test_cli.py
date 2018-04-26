@@ -61,7 +61,8 @@ def test_fail_due_symlink(tmpdir, monkeypatch):
     assert NAME in str(e.value)
 
 
-def test_all(tmpdir, run_wrapper, capfd):
+@pytest.mark.parametrize('extra_opts', [[], ['-C']])
+def test_all(tmpdir, run_wrapper, capfd, extra_opts):
     root_dir = tmpdir / "root"
     # note: we assume that tmpdir is on C: drive on Windows
     root_root_dir = root_dir / os.path.splitdrive(tmpdir)[1] / "root_out"
@@ -93,7 +94,7 @@ def test_all(tmpdir, run_wrapper, capfd):
         "-f", ";%s;empty file;600" % os.path.devnull,
         "-f", ";%s;" % file3_path,
         "-f", ";%s;./" % file4_path,
-    ])
+    ] + extra_opts)
 
     captured = capfd.readouterr()
     assert captured.out == ""
