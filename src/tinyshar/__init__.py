@@ -387,7 +387,7 @@ class SharCreator:
                 b'cd arena\n'
             )
 
-            for i in sorted(self._dirs):
+            for i in sorted(self._dirs - set(j[:d] for j in self._dirs for d in range(1, len(j)))):
                 put(b'mkdir -p %s\n' % _shlex.quote('/'.join(i)).encode())
 
             for tmp_name, quoted_target in files_map:
