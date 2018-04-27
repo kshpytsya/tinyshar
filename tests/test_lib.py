@@ -173,13 +173,13 @@ def test_chaining(shar):
         .render())
 
 
-@pytest.mark.parametrize('extraction_validators', [[], None])
-def test_files(shar, extraction_validators):
+@pytest.mark.parametrize('extraction_verifiers', [[], None])
+def test_files(shar, extraction_verifiers):
     shar.add_file("one", b"abc" * 10)
     shar.add_file("two/one", "")
     shar.add_file("/three", lambda: "")
 
-    b''.join(shar.render(extraction_validators=extraction_validators))
+    b''.join(shar.render(extraction_verifiers=extraction_verifiers))
 
 
 def test_dup_file(shar):

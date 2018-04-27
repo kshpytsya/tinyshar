@@ -151,7 +151,7 @@ def _ShellcheckValidator():
 ShellcheckValidator = _ShellcheckValidator
 
 
-class _Md5Validator:
+class _Md5Verifier:
     def __init__(self):
         self.hashes = []
 
@@ -177,7 +177,7 @@ class _Md5Validator:
         writer(b"_END_\n")
 
 
-Md5Validator = _Md5Validator
+Md5Verifier = _Md5Verifier
 
 
 class SharCreator:
@@ -267,7 +267,7 @@ class SharCreator:
         out_stm=None,
         encoder=None,
         build_validators=None,
-        extraction_validators=None,
+        extraction_verifiers=None,
         tee_to_file=True,
         _test_tmp_dir=None,
     ):
@@ -279,7 +279,7 @@ class SharCreator:
             out_stm (Optional[IO[bytes]]):
             encoder (Optional[Encoder]):
             build_validators (Optional[List[BuildValidator]]):
-            extraction_validators (Optional[List[ExtractionValidator]]):
+            extraction_verifiers (Optional[List[ExtractionVerifier]]):
             tee_to_file (Optional[bool]): Defaults to True.
             _test_tmp_dir: used by unittests to avoid leftoever temp directories
 
@@ -290,8 +290,8 @@ class SharCreator:
         encoder = encoder or Base64Encoder(compressor=XzCompressor())
         if build_validators is None:
             build_validators = [ShellcheckValidator()]
-        if extraction_validators is None:
-            extraction_validators = [Md5Validator()]
+        if extraction_verifiers is None:
+            extraction_verifiers = [Md5Verifier()]
 
         with _contextlib.ExitStack() as exit_stack:
             writers = []
@@ -370,16 +370,16 @@ class SharCreator:
                 with _make_reader_stm(content) as reader_stm:
                     reader = lambda n: reader_stm.read(n)  # noqa: E731
 
-                    for validator in extraction_validators:
-                        reader = validator.wrap_reader(reader, tmp_name)
+                    for verifier in extraction_verifiers:
+                        reader = verifier.wrap_reader(reader, tmp_name)
 
                     encoder.encode(tmp_name, reader, put)
 
             if files_map:
-                put_annotation(b"validation:\n")
+                put_annotation(b"verification:\n")
 
-                for validator in extraction_validators:
-                    validator.render(put)
+                for verifier in extraction_verifiers:
+                    verifier.render(put)
 
             put_break()
             put(
