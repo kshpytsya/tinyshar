@@ -263,6 +263,7 @@ class SharCreator:
         self,
         *,
         shebang=b'/bin/sh',
+        header=[],
         out_stm=None,
         encoder=None,
         build_validators=None,
@@ -333,6 +334,14 @@ class SharCreator:
                         putl(_to_bytes(i))
 
             put(b'#!%s\n' % _to_bytes(shebang))
+            put_break()
+            put(
+                b'# AUTO-GENERATED FILE - DO NOT EDIT!!\n'
+                b'# Produced with the help of tinyshar %s\n' % __version__.encode()
+            )
+            for i in header:
+                put(b'# %s\n' % _to_bytes(i))
+            put_break()
             put(
                 b'set -euxo pipefail\n'
                 b'DIR=$('
