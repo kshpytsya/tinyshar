@@ -363,7 +363,7 @@ class SharCreator:
             files_map = []
             for i, (name, content) in enumerate(sorted(self._files.items())):
                 tmp_name = b'%06d' % i
-                files_map.append((tmp_name, name))
+                files_map.append((tmp_name, _shlex.quote(name).encode()))
 
                 put_annotation(b'file: %s\n' % name.encode())
 
@@ -390,10 +390,11 @@ class SharCreator:
             for i in sorted(self._dirs):
                 put(b'mkdir -p %s\n' % _shlex.quote('/'.join(i)).encode())
 
-            for tmp_name, name in files_map:
-                target = _shlex.quote(name).encode()
-                put(b"test '!' -d %s\n" % target)
-                put(b"mv -f ../%s %s\n" % (tmp_name, target))
+            for tmp_name, quoted_target in files_map:
+                put(b"test '!' -d %s\n" % quoted_target)
+
+            for tmp_name, quoted_target in files_map:
+                put(b"mv -f ../%s %s\n" % (tmp_name, quoted_target))
 
             put_chunks(b'POST:', self._post_chunks)
 
