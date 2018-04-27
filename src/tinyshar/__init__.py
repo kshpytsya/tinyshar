@@ -205,9 +205,17 @@ class SharCreator:
             raise FileExistsError(name)
 
         components = tuple(name.split('/'))
+        if components in self._dirs:
+            raise IsADirectoryError(name)
+
         is_abs = components[0] == ''
         for depth in range(1 + int(is_abs), len(components)):
-            self._dirs.add(components[:depth])
+            components_prefix = components[:depth]
+            joined_components_prefix = '/'.join(components_prefix)
+            if joined_components_prefix in self._files:
+                raise FileExistsError(joined_components_prefix)
+
+            self._dirs.add(components_prefix)
 
         self._files[name] = content
 

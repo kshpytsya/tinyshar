@@ -308,3 +308,15 @@ def test_target_is_a_dir(tmpdir, shar, run):
     d.mkdir()
     shar.add_file(str(d), "")
     run(expect_returncode=[1])
+
+
+def test_file_vs_dir(shar):
+    shar.add_file("a/b", "")
+    with pytest.raises(IsADirectoryError):
+        shar.add_file("a", "")
+
+
+def test_dir_vs_file(shar):
+    shar.add_file("a", "")
+    with pytest.raises(FileExistsError):
+        shar.add_file("a/b", "")
