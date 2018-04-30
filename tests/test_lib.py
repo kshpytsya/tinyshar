@@ -173,7 +173,15 @@ def test_chaining(shar):
         .render())
 
 
-@pytest.mark.parametrize('extraction_verifiers', [[], None])
+@pytest.mark.parametrize(
+    'extraction_verifiers',
+    [
+        [],
+        None,
+        [tinyshar.Md5Verifier()],
+        [tinyshar.Md5Verifier(), tinyshar.Md5Verifier()],
+    ]
+)
 def test_files(shar, extraction_verifiers):
     shar.add_file("one", b"abc" * 10)
     shar.add_file("two/one", "")
@@ -220,6 +228,13 @@ def test_shellcheck(shar):
 
     with pytest.raises(tinyshar.ValidatorError):
         b''.join(shar.render())
+
+
+def test_multiple_validators(shar):
+    shar.add_pre('"')
+
+    with pytest.raises(tinyshar.ValidatorError):
+        b''.join(shar.render(build_validators=[tinyshar.ShellcheckValidator(), tinyshar.ShellcheckValidator()]))
 
 
 def test_no_shellcheck(shar):
