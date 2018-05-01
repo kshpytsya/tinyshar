@@ -5,6 +5,7 @@ environment:
         - PYTHON: "C:/Python36"
         - PYTHON: "C:/Python36-x64"
 init:
+    - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
     - "set PATH=%PYTHON%/scripts;%PYTHON%;%PATH%"
     - "python --version"
     - "pip --version"
@@ -22,3 +23,5 @@ build_script:
     - "inv check"
 test_script:
     - "inv test"
+on_finish:
+    - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
