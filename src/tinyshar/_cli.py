@@ -135,4 +135,6 @@ def main(argv=None):
                 tee_to_file=not args.no_tee
             )
         except tinyshar.ValidatorError as e:
-            sys.exit(str(e))
+            sys.stderr.buffer.write(e.args[0].encode())
+            sys.stderr.buffer.write(e.args[1])
+            sys.exit()

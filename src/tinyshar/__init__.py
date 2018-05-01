@@ -9,7 +9,6 @@ import posixpath as _posixpath
 import shlex as _shlex
 import shutil as _shutil
 import subprocess as _subprocess
-import sys as _sys
 
 
 try:
@@ -167,33 +166,27 @@ class ValidatorError(RuntimeError):
 
 
 @_contextlib.contextmanager
-def ShellcheckValidator(
-    *,
-    redirect=None
-):
+def ShellcheckValidator():
     """Build-time validator of resulting shell script using shellcheck_.
-    Any output of `shellcheck` will be redirected to stderr
-    unless `redirect` is specified.
+    In case of validation failure, any stdout output from `shellcheck`
+    will be available as ``args[1]`` of the raised :class:`ValidatorError` exception.
+
+    Note: :func:`subprocess.Popen.communicate` is not used, so huge output from shellcheck
+    may theoretically cause a deadlock. If this ever becomes a real issue,
+    a solution suggested here_ should be used.
 
     Note: the signature of this class is not a part of a public API, only the class itself and its constructor are.
-
-    Args:
-        redirect (optional): See `stdout` and `stderr` arguments of
-           :func:`subprocess.run` for details.
-           Defaults to `None` which is a shortcut for `sys.stderr`.
 
     Raises:
         FileNotFoundError: If `shellcheck` is not found on `PATH`.
 
     .. _shellcheck: https://www.shellcheck.net/
+    .. _here: http://eyalarubas.com/python-subproc-nonblock.html
     """
-    redirect = redirect or _sys.stderr
-
     process = _subprocess.Popen(
         [_checked_which('shellcheck'), '-'],
         stdin=_subprocess.PIPE,
-        stdout=redirect,
-        stderr=redirect,
+        stdout=_subprocess.PIPE,
     )
 
     yield process.stdin.write
@@ -201,7 +194,7 @@ def ShellcheckValidator(
     process.stdin.close()
     rc = process.wait()
     if rc != 0:
-        raise ValidatorError("shellcheck failed")
+        raise ValidatorError("shellcheck failed", process.stdout.read())
 
 
 class _Md5Verifier:
