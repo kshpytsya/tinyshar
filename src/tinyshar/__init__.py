@@ -171,9 +171,8 @@ def ShellcheckValidator():
     In case of validation failure, any stdout output from `shellcheck`
     will be available as ``args[1]`` of the raised :class:`ValidatorError` exception.
 
-    Note: :func:`subprocess.Popen.communicate` is not used, so huge output from shellcheck
-    may theoretically cause a deadlock. If this ever becomes a real issue,
-    a solution suggested here_ should be used.
+    Note: huge output from shellcheck may theoretically cause a deadlock.
+    If this ever becomes a real issue, a solution suggested here_ should be used.
 
     Note: the signature of this class is not a part of a public API, only the class itself and its constructor are.
 
@@ -183,18 +182,17 @@ def ShellcheckValidator():
     .. _shellcheck: https://www.shellcheck.net/
     .. _here: http://eyalarubas.com/python-subproc-nonblock.html
     """
-    process = _subprocess.Popen(
+    with _subprocess.Popen(
         [_checked_which('shellcheck'), '-'],
         stdin=_subprocess.PIPE,
         stdout=_subprocess.PIPE,
-    )
+    ) as process:
+        yield process.stdin.write
 
-    yield process.stdin.write
+        outs, errs = process.communicate()
 
-    process.stdin.close()
-    rc = process.wait()
-    if rc != 0:
-        raise ValidatorError("shellcheck failed", process.stdout.read())
+        if process.returncode != 0:
+            raise ValidatorError("shellcheck failed", outs)
 
 
 class _Md5Verifier:
