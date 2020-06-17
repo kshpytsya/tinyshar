@@ -426,7 +426,7 @@ class SharCreator:
     def render(
         self,
         *,
-        shebang=b'/bin/sh',
+        shebang=b'/bin/bash',
         header=[],
         out_stm=None,
         encoder=None,
@@ -442,7 +442,7 @@ class SharCreator:
 
         Args:
             shebang (AnyStr, optional): content of the shebang_ string of the resulting
-              script. Defaults to `/bin/sh`.
+              script. Defaults to `/bin/bash`.
             header (:obj:`list` of :obj:`AnyStr`, optional): strings
               to be added as comments at the top of the produced script.
             out_stm (IO[bytes], optional): stream to emit the script to. If not supplied,
